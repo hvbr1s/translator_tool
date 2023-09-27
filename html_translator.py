@@ -60,23 +60,27 @@ def translate_html_content(html_content):
     return html_doc
     
 
+article_ids_to_translate = ['13791830911389']  # Replace with your actual numeric article IDs
+#locales = ['en-us']
 
 def translate_html_files(input_dir, output_dir):
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
     for filename in tqdm(os.listdir(input_dir), desc="Processing files", ncols=100):
-        if filename.endswith('.html'):
-            input_file = os.path.join(input_dir, filename)
-            output_file = os.path.join(output_dir, filename)
+        match = re.search(r'zd_(\d+)_en-us\.html', filename)
+        if match and match.group(1):  # Check if a non-empty ID is extracted
+            file_id = match.group(1)
+            if file_id in article_ids_to_translate:
+                input_file = os.path.join(input_dir, filename)
+                output_file = os.path.join(output_dir, filename)
 
-            with open(input_file, "r", encoding="utf-8") as f:
-                html_content = f.read()
+                with open(input_file, "r", encoding="utf-8") as f:
+                    html_content = f.read()
 
-            translated_html_content = translate_html_content(html_content)
+                translated_html_content = translate_html_content(html_content)
 
-            with open(output_file, "w", encoding="utf-8") as f:
-                f.write(translated_html_content)
+                with open(output_file, "w", encoding="utf-8") as f:
+                    f.write(translated_html_content)
 
-
-translate_html_files("/home/dan/doctran_text/files", "/home/dan/doctran_text/translated")
+translate_html_files("./input_files/articles", "./translated_files")
